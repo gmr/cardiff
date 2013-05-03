@@ -1,0 +1,60 @@
+%YAML 1.2
+---
+Application:
+  flush_interval: 60
+  statsd:
+    host: 0.0.0.0
+    port: 8125
+  upstream:
+    enabled: false
+    host: 0.0.0.0
+    port: 8127
+  backends:
+    amqp:
+      enabled: True
+      host: localhost
+      port: 5672
+      virtual_host: /
+      user: guest
+      password: guest
+      exchange: cardiff
+    graphite:
+      enabled: False
+      host: graphite01.scs.myyearbook.com
+      port: 2004
+      format: pickle
+      batch_size: 300
+      prefix: cardiff
+      counter_prefix: counters
+      gauge_prefix: gauges
+      timer_prefix: timers
+    logger:
+      enabled: False
+    statsd:
+      enabled: False
+      host: graphite01.scs.myyearbook.com
+      port: 8125
+    upstream:
+      enabled: True
+      host: graphite01.scs.myyearbook.com
+      port: 8127
+
+Daemon:
+  user: cardiff
+  pidfile: /var/run/cardiff.pid
+
+Logging:
+  formatters:
+    syslog:
+      format: '%(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s'
+  handlers:
+    syslog:
+      class: logging.handlers.SysLogHandler
+      facility: local6
+      address: /var/run/syslog
+      formatter: syslog
+  loggers:
+    cardiff:
+      level: DEBUG
+      propagate: true
+      handlers: [console, syslog]
