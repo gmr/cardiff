@@ -11,7 +11,7 @@ Application:
     port: 8127
   backends:
     amqp:
-      enabled: True
+      enabled: False
       host: localhost
       port: 5672
       virtual_host: /
@@ -20,7 +20,7 @@ Application:
       exchange: cardiff
     graphite:
       enabled: False
-      host: graphite01.scs.myyearbook.com
+      host: localhost
       port: 2004
       format: pickle
       batch_size: 300
@@ -32,11 +32,11 @@ Application:
       enabled: False
     statsd:
       enabled: False
-      host: graphite01.scs.myyearbook.com
+      host: localhost
       port: 8125
     upstream:
-      enabled: True
-      host: graphite01.scs.myyearbook.com
+      enabled: False
+      host: localhost
       port: 8127
 
 Daemon:
@@ -51,7 +51,7 @@ Logging:
     syslog:
       class: logging.handlers.SysLogHandler
       facility: local6
-      address: /var/run/syslog
+      address: /dev/log
       formatter: syslog
   loggers:
     cardiff:
