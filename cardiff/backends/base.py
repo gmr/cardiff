@@ -91,17 +91,17 @@ class Backend(object):
         count = len(timer)
         total = sum(timer)
 
-        hist_data = dict()
-        for value in timer:
-            key = '%i' % (value * 1000)
-            try:
-                hist_data[key] += 1
-            except KeyError:
-                hist_data[key] = 1
+        #hist_data = dict()
+        #for value in timer:
+        #    key = '%i' % (value * 1000)
+        #    try:
+        #        hist_data[key] += 1
+        #    except KeyError:
+        #        hist_data[key] = 1
 
         return {'count': count,
                 'count_ps': count / self.interval,
-                'histogram_ms': hist_data,
+                #'histogram_ms': hist_data,
                 'min': timer[0],
                 'max': timer[-1],
                 'mean': total / count,

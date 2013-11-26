@@ -169,8 +169,7 @@ class GraphiteBackend(base.Backend):
 
         stats = flatdict.FlatDict({
             controller.METRICS_COUNTER: counters,
-            controller.METRICS_GAUGE: gauges,
-            controller.METRICS_TIMER: timers
+            controller.METRICS_GAUGE: gauges
         })
 
         if self.format == PLAINTEXT:

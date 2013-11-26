@@ -111,8 +111,7 @@ class UpstreamBackend(base.Backend):
                 controller.METRICS_TIMER: timers,
                 controller.METRICS_INTERNAL: {
                     controller.METRICS_COUNTER: int_counters,
-                    controller.METRICS_GAUGE: int_gauges,
-                    controller.METRICS_TIMER: int_timers}}
+                    controller.METRICS_GAUGE: int_gauges}}
 
     def sign_gauges(self, values):
         """Sign the value and return it as a string.

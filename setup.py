@@ -25,7 +25,7 @@ if float('%s.%s' % (major, minor)) < 2.7:
     tests_require.append('unittest2')
 
 setup(name='cardiff',
-      version='1.0.0',
+      version='1.1.0',
       description='Python statsd clone',
       author='Gavin M. Roy',
       author_email='gavinmroy@gmail.com',
