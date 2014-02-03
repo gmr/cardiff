@@ -1,8 +1,9 @@
-import clihelper
+import helper
 import collections
 import copy
 from tornado import ioloop
 import logging
+from helper import parser
 import platform
 import re
 import resource
@@ -79,7 +80,7 @@ def merge_dicts(d, u):
     return d
 
 
-class Cardiff(clihelper.Controller):
+class Cardiff(helper.Controller):
     """The core Cardiff controller/app responsible for processing metric
     values and then sending the values to backends for delivery.
 
@@ -214,7 +215,7 @@ class Cardiff(clihelper.Controller):
         :rtype: int
 
         """
-        return self.application_config.get('flush_interval') or FLUSH_INTERVAL
+        return self.config.application.get('flush_interval') or FLUSH_INTERVAL
 
     def handle_counter(self, key, value=1, sample_size=1):
         """Handle counter packet data, incrementing the value.
@@ -395,11 +396,6 @@ class Cardiff(clihelper.Controller):
         self.internal_timer(METRICS_PROCESSING_TIME, start_time)
 
     def process_stats(self):
-        # Tornado reconfigures the root logger on ioloop.IOLoop.start
-        if self.tornado_logging_hack:
-            self.tornado_logging_hack = False
-            clihelper.setup_logging(self._debug)
-
         self.add_resource_usage()
         LOGGER.debug('Taking last interval snapshot')
         start_time = time.time()
@@ -435,7 +431,7 @@ class Cardiff(clihelper.Controller):
         """This method is called when the cli.run() method is invoked."""
         LOGGER.info('Cardiff version %s started', __version__)
 
-        self.backends = backends.create(self.application_config.get('backends'),
+        self.backends = backends.create(self.config.application.get('backends'),
                                         self.flush_interval)
 
         # Set the host that cardiff is running on for reporting
@@ -445,7 +441,7 @@ class Cardiff(clihelper.Controller):
         self.ioloop = ioloop.IOLoop.instance()
 
         # Run the statsd server
-        config = self.application_config.get('statsd')
+        config = self.config.application.get('statsd')
         if config.get('enabled', True):
             self.statsd_server = servers.UDPServer(config.get('host', HOST),
                                                    config.get('port',
@@ -454,12 +450,11 @@ class Cardiff(clihelper.Controller):
                                                    self.process_data)
 
         # Run the upstream server
-        config = self.application_config.get('upstream')
+        config = self.config.application.get('upstream')
         if config.get('enabled', False):
-            logging_config = clihelper.LOGGING_OBJ
             self.upstream_server = servers.UpstreamServer(self.ioloop,
                                                           self.downstream_data,
-                                                          logging_config)
+                                                          self.logging_config)
             self.upstream_server.listen(config.get('port', UPSTREAM_PORT),
                                         config.get('host', HOST))
 
@@ -528,5 +523,5 @@ class Cardiff(clihelper.Controller):
 
 
 def main():
-    clihelper.setup('cardiff', 'A python statsd clone', '1.0.0')
-    clihelper.run(Cardiff)
+    parser.description('A python statsd clone')
+    helper.start(Cardiff)
